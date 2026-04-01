@@ -15,7 +15,7 @@ interface Props {
 export function MetricsDashboard({ showDeltas }: Props) {
   const { metrics, history } = useGameStore()
 
-  const _lastRecord = history[history.length - 1]
+
   const prevMetrics = history.length > 1
     ? history[history.length - 2].metricsAfter
     : history.length === 1

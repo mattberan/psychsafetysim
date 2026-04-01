@@ -153,6 +153,35 @@ export function ConsequenceScreen() {
           </p>
         </motion.div>
 
+        {/* Best response reveal — only on scenario 1 if they got it wrong */}
+        {currentIndex === 0 && !selectedChoice.isHighSafety && (() => {
+          const best = currentScenario.choices.find(c => c.tone === 'modeling')
+          if (!best) return null
+          return (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.28 }}
+              style={{
+                background: 'rgba(16,185,129,0.07)',
+                border: '2px solid rgba(16,185,129,0.45)',
+                borderRadius: '12px',
+                padding: '18px 20px',
+              }}
+            >
+              <div style={{ fontSize: '10px', fontWeight: 700, color: '#10B981', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '10px' }}>
+                ★ The response that works best
+              </div>
+              <p style={{ fontSize: '15px', color: 'var(--text-primary)', lineHeight: 1.6, fontStyle: 'italic', marginBottom: '10px', opacity: 0.9 }}>
+                "{best.text}"
+              </p>
+              <p style={{ fontSize: '13px', color: '#6EE7B7', lineHeight: 1.55 }}>
+                {best.consequence}
+              </p>
+            </motion.div>
+          )
+        })()}
+
         {/* Metric deltas */}
         <motion.div
           initial={{ opacity: 0 }}

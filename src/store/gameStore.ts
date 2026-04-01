@@ -84,9 +84,9 @@ export const useGameStore = create<GameState>((set, get) => ({
   history: [],
 
   startGame: () => {
-    // Pin P1 Blame Spiral first — most counterintuitive, best hook
-    const rest = shuffle(scenarios.filter((s) => s.id !== 'p1-blame-spiral'))
-    const first = scenarios.find((s) => s.id === 'p1-blame-spiral')!
+    // Pin postmortem-trial first — most counterintuitive, best hook
+    const rest = shuffle(scenarios.filter((s) => s.id !== 'postmortem-trial'))
+    const first = scenarios.find((s) => s.id === 'postmortem-trial')!
     const queue = [first, ...rest]
     set({
       phase: 'scenario',

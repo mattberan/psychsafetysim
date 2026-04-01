@@ -53,7 +53,7 @@ function shuffle<T>(arr: T[]): T[] {
   return a
 }
 
-function applyDelta(metrics: Metrics, choice: Choice, history: ChoiceRecord[]): Metrics {
+function applyDelta(metrics: Metrics, choice: Choice, _history: ChoiceRecord[]): Metrics {
   const jitter = () => Math.floor(Math.random() * 5) - 2
 
   // Compounding rule: if trust < 40, halve positive deltas

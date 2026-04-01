@@ -25,7 +25,7 @@ export function ConsequenceScreen() {
   const isLast = currentIndex >= scenarioQueue.length - 1
   const tone = selectedChoice.tone
   const toneColor = TONE_COLORS[tone]
-  const isPositive = selectedChoice.isHighSafety
+  const _isPositive = selectedChoice.isHighSafety
 
   const metricKeys = ['trust', 'velocity', 'retention', 'innovation'] as const
   const metricLabels = { trust: 'Trust', velocity: 'Velocity', retention: 'Retention', innovation: 'Innovation' }

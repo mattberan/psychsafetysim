@@ -37,6 +37,46 @@ export interface Scenario {
   researchNote?: string
 }
 
+export interface PostmortemVariant {
+  character: string
+  characterRole: string
+  context: string
+  trigger: string
+}
+
+export const postmortemVariants: PostmortemVariant[] = [
+  {
+    character: 'VP Chen',
+    characterRole: 'VP of Engineering',
+    context: 'Postmortem. Release got rolled back. The VP is in the room and the last 20 minutes have been circling. Now it just got direct.',
+    trigger: '"I just want to understand — who was responsible for the QA sign-off on this release?"',
+  },
+  {
+    character: 'VP Rodriguez',
+    characterRole: 'VP of Product',
+    context: 'Postmortem. A botched deploy took down checkout for 90 minutes. The VP flew in for this one. The room has been deflecting for half an hour.',
+    trigger: '"I need a straight answer — whose sign-off was on this before it went to production?"',
+  },
+  {
+    character: 'Director Okafor',
+    characterRole: 'Director of Engineering',
+    context: 'Postmortem. A config change caused a data sync failure affecting three enterprise clients. The director has been quiet — until now.',
+    trigger: '"Let\'s cut to it — who approved the config change that triggered this?"',
+  },
+  {
+    character: 'VP Patel',
+    characterRole: 'VP of Infrastructure',
+    context: 'Postmortem. A rollback wiped two hours of customer data. Legal is already involved. The VP wants accountability before this call ends.',
+    trigger: '"Before we wrap — I want to know who owned the release process on this one."',
+  },
+  {
+    character: 'Director Nakamura',
+    characterRole: 'Director of Platform',
+    context: 'Postmortem. A missed dependency took down the payments service for 40 minutes. The director has been calm all meeting. That just changed.',
+    trigger: '"I\'m going to ask this directly — who was responsible for the dependency review before this shipped?"',
+  },
+]
+
 export const scenarios: Scenario[] = [
   {
     id: 'p1-blame-spiral',

@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { scenarios, type Scenario, type Choice } from '../data/scenarios'
+import { scenarios, postmortemVariants, type Scenario, type Choice } from '../data/scenarios'
 
 export type GamePhase =
   | 'intro'
@@ -85,8 +85,11 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   startGame: () => {
     // Pin postmortem-trial first — most counterintuitive, best hook
+    // Apply a random variant so names/context change each playthrough
     const rest = shuffle(scenarios.filter((s) => s.id !== 'postmortem-trial'))
-    const first = scenarios.find((s) => s.id === 'postmortem-trial')!
+    const base = scenarios.find((s) => s.id === 'postmortem-trial')!
+    const variant = postmortemVariants[Math.floor(Math.random() * postmortemVariants.length)]
+    const first: Scenario = { ...base, ...variant }
     const queue = [first, ...rest]
     set({
       phase: 'scenario',

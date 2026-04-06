@@ -185,7 +185,7 @@ export function DailyConsequenceScreen() {
                 Come back tomorrow
               </div>
               <p style={{ fontSize: '15px', color: 'var(--text-primary)', lineHeight: 1.55, marginBottom: 0, fontWeight: 500 }}>
-                A new scenario every day. Subscribe and it shows up in your inbox — one moment, one choice.
+                A new scenario every day. Subscribe and it shows up in your inbox — in every moment, your words have power.
               </p>
             </div>
             <motion.button

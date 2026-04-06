@@ -316,13 +316,48 @@ export function DebriefScreen() {
           </div>
         </div>
 
+        {/* Subscribe banner — prominent, above What's Next */}
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          style={{
+            background: 'linear-gradient(135deg, rgba(245,158,11,0.12), rgba(245,158,11,0.05))',
+            border: '1px solid rgba(245,158,11,0.35)',
+            borderRadius: '14px', padding: '20px 24px', marginTop: '8px',
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            gap: '20px', flexWrap: 'wrap',
+          }}
+        >
+          <div>
+            <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--amber)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '6px' }}>
+              ★ Daily Challenge — free
+            </div>
+            <p style={{ fontSize: '15px', color: 'var(--text-primary)', fontWeight: 500, margin: 0, lineHeight: 1.5 }}>
+              One scenario every morning. Build the habit of thinking before you speak.
+            </p>
+          </div>
+          <motion.button
+            whileHover={{ scale: 1.05, filter: 'brightness(1.1)' }}
+            whileTap={{ scale: 0.96 }}
+            onClick={() => setShowSubscribe(true)}
+            style={{
+              background: 'var(--amber)', color: '#000', border: 'none',
+              borderRadius: '9px', padding: '12px 28px',
+              fontSize: '15px', fontWeight: 800, flexShrink: 0, cursor: 'pointer',
+            }}
+          >
+            Subscribe →
+          </motion.button>
+        </motion.div>
+
         {/* What's Next */}
-        <div style={{ marginTop: '8px' }}>
+        <div style={{ marginTop: '16px' }}>
           <div style={{
             fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)',
             letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '12px',
           }}>
-            What's next?
+            Or keep going:
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
 
@@ -355,18 +390,10 @@ export function DebriefScreen() {
                 position: 'relative',
               }}
             >
-              <div style={{
-                position: 'absolute', top: '10px', right: '10px',
-                background: 'var(--amber)', color: '#000',
-                fontSize: '9px', fontWeight: 800, letterSpacing: '0.08em',
-                padding: '2px 7px', borderRadius: '4px', textTransform: 'uppercase',
-              }}>
-                New
-              </div>
               <div style={{ fontSize: '22px', marginBottom: '10px' }}>★</div>
-              <div style={{ fontSize: '14px', fontWeight: 700, color: '#F1F5F9', marginBottom: '6px' }}>Daily Challenge</div>
+              <div style={{ fontSize: '14px', fontWeight: 700, color: '#F1F5F9', marginBottom: '6px' }}>Today's Challenge</div>
               <div style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                One scenario a day. Subscribe and it comes to you.
+                Try today's scenario now, then subscribe to get it daily.
               </div>
             </motion.button>
 

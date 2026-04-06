@@ -9,7 +9,7 @@ import {
 } from 'recharts'
 import { toPng } from 'html-to-image'
 import { useGameStore } from '../store/gameStore'
-import { classifyProfile, toneLabels, toneDescriptions } from '../data/outcomes'
+import { classifyProfile, toneLabels } from '../data/outcomes'
 import { SubscribeModal } from '../components/SubscribeModal'
 
 const ATTRITION_COLORS: Record<string, string> = {
@@ -264,8 +264,6 @@ export function DebriefScreen() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             {history.map((record) => {
               const isOpen = expandedScenario === record.scenarioId
-              const scenarioFull = history.find(h => h.scenarioId === record.scenarioId)
-              // Get the full scenario from the queue
               return (
                 <div key={record.scenarioId}>
                   <button

@@ -1,5 +1,5 @@
-import { useRef } from 'react'
-import { motion } from 'framer-motion'
+import { useRef, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   RadarChart,
   Radar,
@@ -9,7 +9,8 @@ import {
 } from 'recharts'
 import { toPng } from 'html-to-image'
 import { useGameStore } from '../store/gameStore'
-import { classifyProfile, toneLabels } from '../data/outcomes'
+import { classifyProfile, toneLabels, toneDescriptions } from '../data/outcomes'
+import { SubscribeModal } from '../components/SubscribeModal'
 
 const ATTRITION_COLORS: Record<string, string> = {
   LOW: '#10B981',
@@ -23,9 +24,15 @@ const LABEL = { fontSize: '11px', fontWeight: 600, color: '#8899AA', letterSpaci
 const BODY = { fontSize: '14px', color: '#C8D6E4', lineHeight: 1.6 }
 const ROW_TEXT = { fontSize: '13px', color: '#C8D6E4' }
 
+const TONE_COLORS: Record<string, string> = {
+  dismissive: '#EF4444', deflecting: '#F59E0B', engaging: '#3B82F6', modeling: '#10B981',
+}
+
 export function DebriefScreen() {
-  const { metrics, initialMetrics, history, restartGame } = useGameStore()
+  const { metrics, initialMetrics, history, restartGame, startDailyChallenge } = useGameStore()
   const cardRef = useRef<HTMLDivElement>(null)
+  const [expandedScenario, setExpandedScenario] = useState<string | null>(null)
+  const [showSubscribe, setShowSubscribe] = useState(false)
 
   const profile = classifyProfile(metrics.trust, metrics.velocity, metrics.retention, metrics.innovation)
 
@@ -232,35 +239,229 @@ export function DebriefScreen() {
           </div>
         </div>
 
-        {/* Actions */}
-        <div style={{ display: 'flex', gap: '12px', marginTop: '24px', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.97 }}
+        {/* Export */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '4px' }}>
+          <button
             onClick={handleExport}
             style={{
-              background: 'var(--surface2)', color: '#C8D6E4',
-              border: '1px solid var(--border-hover)',
-              borderRadius: '10px', padding: '12px 24px',
-              fontSize: '14px', fontWeight: 600,
+              background: 'none', border: 'none',
+              color: 'var(--text-muted)', fontSize: '12px', fontWeight: 500, cursor: 'pointer',
+              textDecoration: 'underline', textDecorationColor: 'rgba(255,255,255,0.15)',
             }}
           >
-            ↓ Export as PNG
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.02, filter: 'brightness(1.1)' }}
-            whileTap={{ scale: 0.97 }}
-            onClick={restartGame}
-            style={{
-              background: 'var(--amber)', color: '#000',
-              border: 'none', borderRadius: '10px',
-              padding: '12px 24px', fontSize: '14px', fontWeight: 800,
-            }}
-          >
-            Play Again →
-          </motion.button>
+            ↓ Export debrief as PNG
+          </button>
+        </div>
+
+        {/* What If? Panel */}
+        <div style={{ marginTop: '8px' }}>
+          <div style={{
+            fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)',
+            letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '10px',
+          }}>
+            What if you'd chosen differently?
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            {history.map((record) => {
+              const isOpen = expandedScenario === record.scenarioId
+              const scenarioFull = history.find(h => h.scenarioId === record.scenarioId)
+              // Get the full scenario from the queue
+              return (
+                <div key={record.scenarioId}>
+                  <button
+                    onClick={() => setExpandedScenario(isOpen ? null : record.scenarioId)}
+                    style={{
+                      width: '100%', background: isOpen ? 'var(--surface2)' : 'var(--surface)',
+                      border: `1px solid ${isOpen ? 'var(--border-hover)' : 'var(--border)'}`,
+                      borderRadius: isOpen ? '10px 10px 0 0' : '10px',
+                      padding: '10px 14px', cursor: 'pointer',
+                      display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '10px',
+                    }}
+                  >
+                    <span style={{ fontSize: '13px', color: '#C8D6E4', fontWeight: 500, textAlign: 'left' }}>
+                      {record.scenarioTitle}
+                    </span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+                      <span style={{
+                        fontSize: '11px', fontWeight: 600, color: TONE_COLORS[record.choice.tone],
+                        background: `${TONE_COLORS[record.choice.tone]}15`,
+                        padding: '2px 8px', borderRadius: '4px',
+                      }}>
+                        {toneLabels[record.choice.tone]}
+                      </span>
+                      <span style={{ fontSize: '12px', color: 'var(--text-muted)', transform: isOpen ? 'rotate(180deg)' : 'none', display: 'inline-block', transition: 'transform 0.2s' }}>▼</span>
+                    </div>
+                  </button>
+
+                  <AnimatePresence>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.25 }}
+                        style={{
+                          overflow: 'hidden',
+                          background: 'var(--surface2)',
+                          border: '1px solid var(--border-hover)',
+                          borderTop: 'none',
+                          borderRadius: '0 0 10px 10px',
+                        }}
+                      >
+                        <WhatIfChoices record={record} />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* What's Next */}
+        <div style={{ marginTop: '8px' }}>
+          <div style={{
+            fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)',
+            letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '12px',
+          }}>
+            What's next?
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+
+            {/* Replay */}
+            <motion.button
+              whileHover={{ scale: 1.02, borderColor: 'var(--border-hover)' }}
+              whileTap={{ scale: 0.98 }}
+              onClick={restartGame}
+              style={{
+                background: 'var(--surface)', border: '1px solid var(--border)',
+                borderRadius: '12px', padding: '20px 16px', cursor: 'pointer', textAlign: 'left',
+              }}
+            >
+              <div style={{ fontSize: '22px', marginBottom: '10px' }}>↺</div>
+              <div style={{ fontSize: '14px', fontWeight: 700, color: '#F1F5F9', marginBottom: '6px' }}>Play Again</div>
+              <div style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                Scenarios shuffle every time. See if your choices change.
+              </div>
+            </motion.button>
+
+            {/* Daily Challenge */}
+            <motion.button
+              whileHover={{ scale: 1.02, borderColor: 'rgba(245,158,11,0.5)' }}
+              whileTap={{ scale: 0.98 }}
+              onClick={startDailyChallenge}
+              style={{
+                background: 'linear-gradient(135deg, rgba(245,158,11,0.1), rgba(245,158,11,0.04))',
+                border: '1px solid rgba(245,158,11,0.3)',
+                borderRadius: '12px', padding: '20px 16px', cursor: 'pointer', textAlign: 'left',
+                position: 'relative',
+              }}
+            >
+              <div style={{
+                position: 'absolute', top: '10px', right: '10px',
+                background: 'var(--amber)', color: '#000',
+                fontSize: '9px', fontWeight: 800, letterSpacing: '0.08em',
+                padding: '2px 7px', borderRadius: '4px', textTransform: 'uppercase',
+              }}>
+                New
+              </div>
+              <div style={{ fontSize: '22px', marginBottom: '10px' }}>★</div>
+              <div style={{ fontSize: '14px', fontWeight: 700, color: '#F1F5F9', marginBottom: '6px' }}>Daily Challenge</div>
+              <div style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                One scenario a day. Subscribe and it comes to you.
+              </div>
+            </motion.button>
+
+            {/* Play as someone else — coming soon */}
+            <div style={{
+              background: 'var(--surface)', border: '1px solid var(--border)',
+              borderRadius: '12px', padding: '20px 16px', opacity: 0.5,
+              position: 'relative',
+            }}>
+              <div style={{
+                position: 'absolute', top: '10px', right: '10px',
+                background: 'var(--surface2)', color: 'var(--text-muted)',
+                fontSize: '9px', fontWeight: 700, letterSpacing: '0.08em',
+                padding: '2px 7px', borderRadius: '4px', textTransform: 'uppercase',
+              }}>
+                Soon
+              </div>
+              <div style={{ fontSize: '22px', marginBottom: '10px' }}>◈</div>
+              <div style={{ fontSize: '14px', fontWeight: 700, color: '#F1F5F9', marginBottom: '6px' }}>Play as Priya</div>
+              <div style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                The same moments — from the receiving end.
+              </div>
+            </div>
+          </div>
         </div>
       </motion.div>
+
+      <AnimatePresence>
+        {showSubscribe && (
+          <SubscribeModal onClose={() => setShowSubscribe(false)} triggerLabel="debrief" />
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+// Sub-component: all 4 choices for a given scenario
+function WhatIfChoices({ record }: { record: import('../store/gameStore').ChoiceRecord }) {
+  const { scenarioQueue } = useGameStore()
+  const scenario = scenarioQueue.find(s => s.id === record.scenarioId)
+  if (!scenario) return null
+
+  return (
+    <div style={{ padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      {scenario.choices.map((choice, i) => {
+        const isChosen = choice.id === record.choice.id
+        const c = TONE_COLORS[choice.tone]
+        const letters = ['A','B','C','D']
+        return (
+          <div
+            key={choice.id}
+            style={{
+              display: 'flex', gap: '10px', alignItems: 'flex-start',
+              padding: '10px 12px', borderRadius: '8px',
+              background: isChosen ? `${c}12` : 'rgba(255,255,255,0.02)',
+              border: `1px solid ${isChosen ? c + '40' : 'rgba(255,255,255,0.04)'}`,
+            }}
+          >
+            <span style={{
+              width: '20px', height: '20px', borderRadius: '4px',
+              background: isChosen ? `${c}25` : 'var(--surface)',
+              border: `1px solid ${isChosen ? c + '50' : 'var(--border)'}`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '10px', fontWeight: 700, color: isChosen ? c : 'var(--text-muted)',
+              flexShrink: 0, marginTop: '1px',
+            }}>
+              {letters[i]}
+            </span>
+            <div style={{ flex: 1 }}>
+              <p style={{ fontSize: '13px', color: isChosen ? '#F1F5F9' : 'var(--text-secondary)', lineHeight: 1.5, margin: '0 0 4px' }}>
+                {choice.text}
+              </p>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
+                <span style={{
+                  fontSize: '10px', fontWeight: 600, color: c,
+                  background: `${c}15`, padding: '1px 7px', borderRadius: '3px',
+                }}>
+                  {toneLabels[choice.tone]}
+                </span>
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                  {(['trust','velocity','retention','innovation'] as const).map(k => {
+                    const d = choice.delta[k]
+                    return d !== 0 ? `${k[0].toUpperCase()} ${d > 0 ? '+' : ''}${d}` : null
+                  }).filter(Boolean).join(' · ')}
+                </span>
+                {isChosen && (
+                  <span style={{ fontSize: '10px', fontWeight: 700, color: c }}>← your choice</span>
+                )}
+              </div>
+            </div>
+          </div>
+        )
+      })}
     </div>
   )
 }

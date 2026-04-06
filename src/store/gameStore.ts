@@ -6,6 +6,10 @@ export type GamePhase =
   | 'scenario'
   | 'consequence'
   | 'debrief'
+  | 'daily'
+  | 'daily-consequence'
+
+export type GameMode = 'standard' | 'daily'
 
 export interface Metrics {
   trust: number
@@ -23,6 +27,7 @@ export interface ChoiceRecord {
 
 interface GameState {
   phase: GamePhase
+  mode: GameMode
   metrics: Metrics
   initialMetrics: Metrics
   scenarioQueue: Scenario[]
@@ -32,6 +37,7 @@ interface GameState {
   history: ChoiceRecord[]
 
   startGame: () => void
+  startDailyChallenge: () => void
   selectChoice: (choice: Choice) => void
   nextScenario: () => void
   restartGame: () => void
@@ -53,18 +59,14 @@ function shuffle<T>(arr: T[]): T[] {
   return a
 }
 
-function applyDelta(metrics: Metrics, choice: Choice, _history: ChoiceRecord[]): Metrics {
+function applyDelta(metrics: Metrics, choice: Choice): Metrics {
   const jitter = () => Math.floor(Math.random() * 5) - 2
-
-  // Compounding rule: if trust < 40, halve positive deltas
   const trustLow = metrics.trust < 40
   const scale = (v: number) => {
     const jittered = v + jitter()
     return trustLow && jittered > 0 ? Math.floor(jittered / 2) : jittered
   }
-
   const clamp = (v: number) => Math.min(95, Math.max(5, v))
-
   return {
     trust: clamp(metrics.trust + scale(choice.delta.trust)),
     velocity: clamp(metrics.velocity + scale(choice.delta.velocity)),
@@ -73,8 +75,15 @@ function applyDelta(metrics: Metrics, choice: Choice, _history: ChoiceRecord[]):
   }
 }
 
+// Deterministic daily scenario — same for everyone on the same calendar day
+function getDailyScenario(): Scenario {
+  const dayIndex = Math.floor(Date.now() / (1000 * 60 * 60 * 24))
+  return scenarios[dayIndex % scenarios.length]
+}
+
 export const useGameStore = create<GameState>((set, get) => ({
   phase: 'intro',
+  mode: 'standard',
   metrics: { ...STARTING_METRICS },
   initialMetrics: { ...STARTING_METRICS },
   scenarioQueue: [],
@@ -84,8 +93,6 @@ export const useGameStore = create<GameState>((set, get) => ({
   history: [],
 
   startGame: () => {
-    // Pin postmortem-trial first — most counterintuitive, best hook
-    // Apply a random variant so names/context change each playthrough
     const rest = shuffle(scenarios.filter((s) => s.id !== 'postmortem-trial'))
     const base = scenarios.find((s) => s.id === 'postmortem-trial')!
     const variant = postmortemVariants[Math.floor(Math.random() * postmortemVariants.length)]
@@ -93,6 +100,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     const queue = [first, ...rest]
     set({
       phase: 'scenario',
+      mode: 'standard',
       metrics: { ...STARTING_METRICS },
       initialMetrics: { ...STARTING_METRICS },
       scenarioQueue: queue,
@@ -103,9 +111,24 @@ export const useGameStore = create<GameState>((set, get) => ({
     })
   },
 
+  startDailyChallenge: () => {
+    const scenario = getDailyScenario()
+    set({
+      phase: 'daily',
+      mode: 'daily',
+      metrics: { ...STARTING_METRICS },
+      initialMetrics: { ...STARTING_METRICS },
+      scenarioQueue: [scenario],
+      currentIndex: 0,
+      currentScenario: scenario,
+      selectedChoice: null,
+      history: [],
+    })
+  },
+
   selectChoice: (choice: Choice) => {
-    const { metrics, history, currentScenario } = get()
-    const newMetrics = applyDelta(metrics, choice, history)
+    const { metrics, history, currentScenario, mode } = get()
+    const newMetrics = applyDelta(metrics, choice)
     const record: ChoiceRecord = {
       scenarioId: currentScenario!.id,
       scenarioTitle: currentScenario!.title,
@@ -113,7 +136,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       metricsAfter: newMetrics,
     }
     set({
-      phase: 'consequence',
+      phase: mode === 'daily' ? 'daily-consequence' : 'consequence',
       selectedChoice: choice,
       metrics: newMetrics,
       history: [...history, record],
@@ -136,6 +159,6 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   restartGame: () => {
-    set({ phase: 'intro' })
+    set({ phase: 'intro', mode: 'standard' })
   },
 }))

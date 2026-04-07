@@ -99,10 +99,10 @@ export function SubscribeModal({ onClose, triggerLabel }: Props) {
               </div>
 
               <h3 style={{ fontSize: '22px', fontWeight: 800, color: '#F1F5F9', marginBottom: '10px', letterSpacing: '-0.01em' }}>
-                Words at work.
+                The Beran Brief
               </h3>
               <p style={{ fontSize: '15px', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '24px' }}>
-                Scenarios, research insights, and new features as we build them — straight to your inbox. From Matt Beran, 20+ years in ITSM and team dynamics.
+                Three topics, one sentence each — every Thursday. Get new scenarios, research insights, and new games, apps and content as we build them together — straight to your inbox.
               </p>
 
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>

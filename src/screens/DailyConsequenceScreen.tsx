@@ -182,10 +182,10 @@ export function DailyConsequenceScreen() {
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '20px', flexWrap: 'wrap' }}>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--amber)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '8px' }}>
-                Come back tomorrow
+                Free Newsletter
               </div>
               <p style={{ fontSize: '15px', color: 'var(--text-primary)', lineHeight: 1.55, marginBottom: 0, fontWeight: 500 }}>
-                A new scenario every day. Subscribe and it shows up in your inbox — in every moment, your words have power.
+                Scenarios, insights, and new features as we build them — in every moment, your words have power.
               </p>
             </div>
             <motion.button

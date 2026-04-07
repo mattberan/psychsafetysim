@@ -145,7 +145,7 @@ export function IntroScreen() {
           }}
         >
           <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
-            Get one scenario in your inbox every morning.
+            Scenarios, insights &amp; updates — free newsletter.
           </span>
           <button
             onClick={() => setShowSubscribe(true)}

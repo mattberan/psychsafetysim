@@ -331,10 +331,10 @@ export function DebriefScreen() {
         >
           <div>
             <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--amber)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '6px' }}>
-              ★ Daily Challenge — free
+              ★ Free Newsletter
             </div>
             <p style={{ fontSize: '15px', color: 'var(--text-primary)', fontWeight: 500, margin: 0, lineHeight: 1.5 }}>
-              One scenario every morning. Build the habit of thinking before you speak.
+              Scenarios, research insights, and new features as we build — straight to your inbox.
             </p>
           </div>
           <motion.button

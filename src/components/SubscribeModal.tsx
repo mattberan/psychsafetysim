@@ -75,7 +75,7 @@ export function SubscribeModal({ onClose, triggerLabel }: Props) {
                 You're in.
               </h3>
               <p style={{ fontSize: '15px', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '24px' }}>
-                Tomorrow's scenario lands in your inbox. One moment. One choice. See what you'd do.
+                You're on the list. Scenarios, insights, and updates — coming to your inbox.
               </p>
               <button
                 onClick={onClose}
@@ -94,15 +94,15 @@ export function SubscribeModal({ onClose, triggerLabel }: Props) {
               <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginBottom: '16px' }}>
                 <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: 'var(--amber)' }} />
                 <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--amber)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-                  Daily Challenge
+                  Free Newsletter
                 </span>
               </div>
 
               <h3 style={{ fontSize: '22px', fontWeight: 800, color: '#F1F5F9', marginBottom: '10px', letterSpacing: '-0.01em' }}>
-                One scenario a day.
+                Words at work.
               </h3>
               <p style={{ fontSize: '15px', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '24px' }}>
-                A real workplace moment in your inbox every morning. One choice. See what you'd do — and why it matters.
+                Scenarios, research insights, and new features as we build them — straight to your inbox. From Matt Beran, 20+ years in ITSM and team dynamics.
               </p>
 
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>

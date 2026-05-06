@@ -167,6 +167,19 @@ export function IntroScreen() {
         >
           Based on research by Amy Edmondson · Google Project Aristotle · Kim Scott
         </motion.p>
+
+        <motion.a
+          href="https://invgate.com/?utm_source=mattberandotcom&utm_medium=matt-organic&utm_campaign=psych_safety"
+          target="_blank"
+          rel="noreferrer"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8 }}
+          whileHover={{ opacity: 0.85 }}
+          style={{ display: 'block', marginTop: '20px' }}
+        >
+          <img src="/invgate-banner.png" alt="InvGate Service Management" style={{ width: '100%', maxWidth: '480px', borderRadius: '8px', display: 'block', margin: '0 auto' }} />
+        </motion.a>
       </motion.div>
 
       <AnimatePresence>

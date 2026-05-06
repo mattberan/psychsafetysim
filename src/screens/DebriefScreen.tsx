@@ -421,6 +421,15 @@ export function DebriefScreen() {
         </div>
       </motion.div>
 
+      <a
+        href="https://invgate.com/?utm_source=mattberandotcom&utm_medium=matt-organic&utm_campaign=psych_safety"
+        target="_blank"
+        rel="noreferrer"
+        style={{ display: 'block', marginTop: '32px', marginBottom: '8px' }}
+      >
+        <img src="/invgate-banner.png" alt="InvGate Service Management" style={{ width: '100%', maxWidth: '480px', borderRadius: '8px', display: 'block', margin: '0 auto', opacity: 0.9 }} />
+      </a>
+
       <AnimatePresence>
         {showSubscribe && (
           <SubscribeModal onClose={() => setShowSubscribe(false)} triggerLabel="debrief" />
